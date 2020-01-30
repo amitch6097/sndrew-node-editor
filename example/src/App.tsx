@@ -1,23 +1,76 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
+import { Editor } from './reactComponentLib';
 
-import { TestComponent } from './reactComponentLib';
-
-const StyledDiv = styled.div`
-  padding: 10px;
-  background-color: blue;
-  color: white;
-`;
-
-class App extends Component {
-  render() {
-    return (
-      <div>
-        <TestComponent text="Styled Component from React library" />
-        <StyledDiv>Example App styled component</StyledDiv>
-      </div>
-    );
-  }
+function Node(props: any) {
+  return (
+    <div
+      style={{
+        background: 'teal',
+        width: '100px',
+        height: '100px',
+        borderRadius: '50px',
+      }}
+    >
+      {props.id}
+    </div>
+  );
 }
 
-export default App;
+export default function App() {
+  return (
+    <div className="App">
+      <Editor
+        Node={Node}
+        nodes={[
+          {
+            id: '1',
+            children: [
+              {
+                id: '2a',
+                children: [
+                  {
+                    id: '3a',
+                    children: [
+                      {
+                        id: '1',
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                id: '2b',
+                children: [
+                  {
+                    id: '3b',
+                    children: [
+                      {
+                        id: '1',
+                      },
+                    ],
+                  },
+                  {
+                    id: '3c',
+                    children: [
+                      {
+                        id: '4a',
+                        children: [
+                          {
+                            id: '1',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    id: '3d',
+                  },
+                ],
+              },
+            ],
+          },
+        ]}
+      />
+    </div>
+  );
+}

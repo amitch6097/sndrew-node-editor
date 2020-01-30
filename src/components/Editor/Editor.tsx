@@ -1,124 +1,112 @@
-import * as React from "react";
-import "./Editor.css";
+import * as React from 'react';
+import './Editor.css';
 
-import SVGLayer from "../SVGLayer/SVGLayer";
-import Tree from "../Tree/Tree";
-import withDrag from "../../hoc/withDrag";
-import * as EditorHelpers from "../../lib/Editor.helpers";
-
+import SVGLayer from '../SVGLayer/SVGLayer';
+import Tree from '../Tree/Tree';
+import withDrag from '../../hoc/withDrag';
+import * as EditorHelpers from '../../lib/Editor.helpers';
 
 interface IEditorProps {
-  currentPosition?: {
-    x: number;
-    y: number;
-  };
-  onDragContainerMouseDown?: (e: any) => void;
-  Node: React.ComponentClass<any>;
-  nodes: SndrewEditor.INode[];
-  onPathClicked?: (e: any) => void;
+    currentPosition?: {
+        x: number;
+        y: number;
+    };
+    onDragContainerMouseDown?: (e: any) => void;
+    Node: React.ComponentClass<any>;
+    nodes: SndrewEditor.INode[];
+    onPathClicked?: (link: SndrewEditor.ILink) => void;
 }
 
 interface IEditorState {
-  zoom: number;
-  links: SndrewEditor.ILink[];
+    zoom: number;
+    links: SndrewEditor.ILink[];
 }
 
 const MIN_ZOOM = 0.01;
 const MAX_ZOOM = 3;
-const EDITOR_CONTAINER = "editor-container-id";
+const EDITOR_CONTAINER = 'editor-container-id';
 
 class Editor extends React.Component<IEditorProps, IEditorState> {
-  state = {
-    links: [],
-    zoom: 1
-  };
+    state = {
+        links: [],
+        zoom: 1,
+    };
 
-  componentDidMount() {
-    window.addEventListener("resize", this.onWindowResize);
-    this.resetPaths();
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.onWindowResize);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.nodes !== prevProps.nodes) {
-      this.resetPaths();
+    componentDidMount() {
+        window.addEventListener('resize', this.onWindowResize);
+        this.resetPaths();
     }
-  }
 
-  onWindowResize = () => {
-    this.resetPaths();
-  };
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.onWindowResize);
+    }
 
-  resetPaths = () => {
-    const { zoom } = this.state;
-    const { nodes } = this.props;
-    const links = EditorHelpers.getLinks({
-      nodes,
-      zoom,
-      container: EDITOR_CONTAINER
-    });
-    this.setState({
-      links: links
-    });
-  };
+    componentDidUpdate(prevProps: IEditorProps) {
+        if (this.props.nodes !== prevProps.nodes) {
+            this.resetPaths();
+        }
+    }
 
-  onZoom = (value: number) => {
-    const { zoom } = this.state;
-    const nextZoom = zoom + value;
-    this.setState({
-      zoom:
-        nextZoom < MIN_ZOOM
-          ? MIN_ZOOM
-          : nextZoom > MAX_ZOOM
-          ? MAX_ZOOM
-          : nextZoom
-    });
-  };
+    onWindowResize = () => {
+        this.resetPaths();
+    };
 
-  render() {
-    const { zoom, links } = this.state;
-    const {
-      currentPosition = { x: 0, y: 0 },
-      onDragContainerMouseDown,
-      Node,
-      onPathClicked
-    } = this.props;
-    const { x, y } = currentPosition;
+    resetPaths = () => {
+        const { zoom } = this.state;
+        const { nodes } = this.props;
+        const links = EditorHelpers.getLinks({
+            nodes,
+            zoom,
+            container: EDITOR_CONTAINER,
+        });
+        this.setState({
+            links: links,
+        });
+    };
 
-    return (
-      <div
-        id="editor"
-        className="editor"
-        onMouseDown={onDragContainerMouseDown}
-        onWheel={e => {
-          const x = e.deltaX;
-          const y = e.deltaY / 1000;
-          this.onZoom(y);
-        }}
-      >
-        <SVGLayer
-          style={{
-            transform: `translate(${x}px, ${y}px) scale(${zoom})`
-          }}
-          zoom={zoom}
-          onPathClicked={onPathClicked}
-          links={links}
-        />
-        <div
-          id={EDITOR_CONTAINER}
-          className="editor__tree"
-          style={{
-            transform: `translate(${x}px, ${y}px) scale(${zoom})`
-          }}
-        >
-          <Tree {...this.props} Node={Node} />
-        </div>
-      </div>
-    );
-  }
+    onZoom = (value: number) => {
+        const { zoom } = this.state;
+        const nextZoom = zoom + value;
+        this.setState({
+            zoom: nextZoom < MIN_ZOOM ? MIN_ZOOM : nextZoom > MAX_ZOOM ? MAX_ZOOM : nextZoom,
+        });
+    };
+
+    render() {
+        const { zoom, links } = this.state;
+        const { currentPosition = { x: 0, y: 0 }, onDragContainerMouseDown, Node, onPathClicked } = this.props;
+        const { x, y } = currentPosition;
+
+        return (
+            <div
+                id="editor"
+                className="editor"
+                onMouseDown={onDragContainerMouseDown}
+                onWheel={e => {
+                    // const x = e.deltaX;
+                    const y = e.deltaY / 1000;
+                    this.onZoom(y);
+                }}
+            >
+                <SVGLayer
+                    style={{
+                        transform: `translate(${x}px, ${y}px) scale(${zoom})`,
+                    }}
+                    onPathClicked={onPathClicked}
+                    links={links}
+                />
+                <div
+                    id={EDITOR_CONTAINER}
+                    className="editor__tree"
+                    style={{
+                        transform: `translate(${x}px, ${y}px) scale(${zoom})`,
+                    }}
+                >
+                    <Tree {...this.props} Node={Node} />
+                </div>
+            </div>
+        );
+    }
 }
 
 export default withDrag(Editor);

@@ -1,2 +1,2 @@
-import { TestComponent } from './components/TestComponent/TestComponent';
-export { TestComponent };
+import Editor from './components/Editor/Editor';
+export { Editor };

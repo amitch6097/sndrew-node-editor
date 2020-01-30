@@ -1,23 +1,28 @@
-import typescript from "rollup-plugin-typescript2";
-import pkg from "./package.json";
+import typescript from 'rollup-plugin-typescript2';
+import postcss from 'rollup-plugin-postcss';
+
+import pkg from './package.json';
 
 export default [
-  {
-    input: "src/index.ts",
-    external: Object.keys(pkg.peerDependencies || {}),
-    plugins: [
-      typescript({
-        typescript: require("typescript")
-      })
-    ],
-    output: [
-      { file: pkg.main, format: "cjs" },
-      { file: pkg.module, format: "esm" },
-      {
-        file: "example/src/reactComponentLib/index.js",
-        format: "es",
-        banner: "/* eslint-disable */"
-      }
-    ]
-  }
+    {
+        input: 'src/index.ts',
+        external: Object.keys(pkg.peerDependencies || {}),
+        plugins: [
+            postcss({
+                extensions: ['.css'],
+            }),
+            typescript({
+                typescript: require('typescript'),
+            }),
+        ],
+        output: [
+            { file: pkg.main, format: 'cjs' },
+            { file: pkg.module, format: 'esm' },
+            {
+                file: 'example/src/reactComponentLib/index.js',
+                format: 'es',
+                banner: '/* eslint-disable */',
+            },
+        ],
+    },
 ];
