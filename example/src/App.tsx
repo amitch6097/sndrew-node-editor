@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Editor } from './reactComponentLib';
 
 function Node(props: any) {
@@ -9,6 +9,10 @@ function Node(props: any) {
         width: '100px',
         height: '100px',
         borderRadius: '50px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: 'white',
       }}
     >
       {props.id}

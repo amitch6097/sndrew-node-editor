@@ -182,7 +182,7 @@ const upLink = (
     const isLeft = p1.x < p2.x;
     const pad = isLeft ? -45 : 45;
     const sweep = isLeft ? 1 : 0;
-    const container = document.getElementById('editor');
+    const container = document.getElementById('tree__node-head-node');
     const cardSize =
         (container && (isLeft ? container.getBoundingClientRect().left : container.getBoundingClientRect().right)) || 0;
     /**

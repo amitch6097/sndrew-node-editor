@@ -91,6 +91,7 @@ function SVGPath(_a) {
             return (createElement("path", { onClick: function () { return onClick(link); }, onMouseOver: function () { return setHover(true); }, onMouseOut: function () { return setHover(false); }, key: p, d: p, stroke: stroke, strokeWidth: hover ? '5' : '2', fill: "none" }));
         })));
 }
+//# sourceMappingURL=SVGPath.js.map
 
 var SVGLayer = /** @class */ (function (_super) {
     __extends(SVGLayer, _super);
@@ -106,6 +107,7 @@ var SVGLayer = /** @class */ (function (_super) {
     };
     return SVGLayer;
 }(Component));
+//# sourceMappingURL=SVGLayer.js.map
 
 var css$2 = ".tree {\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n}\n\n.tree .tree__node-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n\n.tree .tree__node-container .tree__node-container-node {\n  pointer-events: all;\n  margin: 30px;\n}\n";
 styleInject(css$2);
@@ -130,6 +132,7 @@ function Tree(props) {
                 children && children.length !== 0 && (createElement(Tree, __assign({}, props, { nodes: children, headNode: false, drawn: drawn }))))));
         })));
 }
+//# sourceMappingURL=Tree.js.map
 
 function withDrag(WrappedComponent) {
     return /** @class */ (function (_super) {
@@ -208,6 +211,7 @@ function withDrag(WrappedComponent) {
         return WithDragComponent;
     }(React__default.Component));
 }
+//# sourceMappingURL=withDrag.js.map
 
 function getLinks(_a) {
     var nodes = _a.nodes, zoom = _a.zoom, container = _a.container;
@@ -343,7 +347,7 @@ var upLink = function (_a, paths, toId, fromId) {
     var isLeft = p1.x < p2.x;
     var pad = isLeft ? -45 : 45;
     var sweep = isLeft ? 1 : 0;
-    var container = document.getElementById('editor');
+    var container = document.getElementById('tree__node-head-node');
     var cardSize = (container && (isLeft ? container.getBoundingClientRect().left : container.getBoundingClientRect().right)) || 0;
     /**
      * Need to create a component that will own a bunch of these links
@@ -364,6 +368,7 @@ var upLink = function (_a, paths, toId, fromId) {
     };
     return __spreadArrays(paths, [newPath]);
 };
+//# sourceMappingURL=Editor.helpers.js.map
 
 var MIN_ZOOM = 0.01;
 var MAX_ZOOM = 3;
