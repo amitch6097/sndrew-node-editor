@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "name": "sndrew-node-editor",
     "author": "Andrew Mitchell",
     "homepage": "https://amitch6097.github.io/SndrewNodeEditor",
@@ -39,7 +39,6 @@
         "build": "rollup -c",
         "build-watch": "rollup -c -w",
         "prepublishOnly": "npm run build",
-        "postinstall": "install-peers -f && cd example && npm i",
         "start-example": "cd example && npm start",
         "deploy-example": "cd example && npm run deploy",
         "dev": "concurrently --kill-others \"npm run build-watch\" \"npm run start-example\"",
