@@ -32,7 +32,7 @@ Finally you need to describe what a Node should look like, by supplying Editor w
 
 ```ts 
 interface IEditorProps {
-  Node: React.Component<INode>,
+  Node: React.Component<INode>;
   nodes: INode[];
 }
 ```
