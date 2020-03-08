@@ -2,6 +2,9 @@
 
 A React Library for creating UI Nodes
 
+[![npm version](https://img.shields.io/npm/v/sndrew-node-editor.svg?style=flat-square)](https://www.npmjs.com/package/sndrew-node-editor)
+[![npm downloads](https://img.shields.io/npm/dm/sndrew-node-editor.svg?style=flat-square)](https://www.npmjs.com/package/sndrew-node-editor)
+
 ![Imgur Image](https://i.imgur.com/iw4VNsH.png)
 
 ### Installation
