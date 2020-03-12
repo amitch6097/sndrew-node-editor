@@ -91,6 +91,7 @@ function SVGPath(_a) {
             return (createElement("path", { onClick: function () { return onClick(link); }, onMouseOver: function () { return setHover(true); }, onMouseOut: function () { return setHover(false); }, key: p, d: p, stroke: stroke, strokeWidth: hover ? '5' : '2', fill: "none" }));
         })));
 }
+//# sourceMappingURL=SVGPath.js.map
 
 var SVGLayer = /** @class */ (function (_super) {
     __extends(SVGLayer, _super);
@@ -106,30 +107,33 @@ var SVGLayer = /** @class */ (function (_super) {
     };
     return SVGLayer;
 }(Component));
+//# sourceMappingURL=SVGLayer.js.map
 
 var css$2 = ".tree {\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n}\n\n.tree .tree__node-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n\n.tree .tree__node-container .tree__node-container-node {\n  pointer-events: all;\n  margin: 30px;\n}\n";
 styleInject(css$2);
 
 function Tree(props) {
-    var nodes = props.nodes, Node = props.Node, _a = props.headNode, headNode = _a === void 0 ? true : _a, _b = props.drawn, drawn = _b === void 0 ? {} : _b;
+    var ids = props.ids, childNodes = props.childNodes, nodes = props.nodes, Node = props.Node, _a = props.headNode, headNode = _a === void 0 ? true : _a, _b = props.drawn, drawn = _b === void 0 ? {} : _b;
     var hasDrawn = function (id) {
         return Boolean(drawn[id]);
     };
     var setDrawn = function (id) {
         drawn[id] = true;
     };
-    return (createElement("div", { className: "tree" }, nodes &&
-        nodes
-            .filter(function (node) { return !hasDrawn(node.id); })
-            .map(function (node) {
-            setDrawn(node.id);
-            var children = node.children && node.children.filter(function (child) { return !hasDrawn(child.id); });
+    return (createElement("div", { className: "tree" }, ids &&
+        ids
+            .filter(function (id) { return !hasDrawn(id); })
+            .map(function (id) {
+            setDrawn(id);
+            var node = nodes[id];
+            var childIds = childNodes[id].filter(function (cid) { return !hasDrawn(cid); });
             return (node && (createElement("div", { key: node.id, id: headNode ? 'tree__node-head-node' : '', className: "tree__node-container" },
                 createElement("div", { id: node.id, className: "tree__node-container-node" },
                     createElement(Node, __assign({}, node))),
-                children && children.length !== 0 && (createElement(Tree, __assign({}, props, { nodes: children, headNode: false, drawn: drawn }))))));
+                childIds && childIds.length > 0 && (createElement(Tree, __assign({}, props, { ids: childIds, headNode: false, drawn: drawn }))))));
         })));
 }
+//# sourceMappingURL=Tree.js.map
 
 function withDrag(WrappedComponent) {
     return /** @class */ (function (_super) {
@@ -208,45 +212,52 @@ function withDrag(WrappedComponent) {
         return WithDragComponent;
     }(React__default.Component));
 }
+//# sourceMappingURL=withDrag.js.map
 
 function getLinks(_a) {
-    var nodes = _a.nodes, zoom = _a.zoom, container = _a.container;
-    if (!nodes)
+    var nodes = _a.nodes, zoom = _a.zoom, container = _a.container, childNodes = _a.childNodes, ids = _a.ids;
+    if (!ids)
         return [];
     var drawn = {};
     var paths = [];
-    var links = _getLinks({ nodes: nodes, paths: paths, zoom: zoom, drawn: drawn, container: container });
+    var links = _getLinks({ nodes: nodes, paths: paths, zoom: zoom, drawn: drawn, container: container, childNodes: childNodes, ids: ids });
     return links;
 }
 function _getLinks(_a) {
-    var nodes = _a.nodes, paths = _a.paths, zoom = _a.zoom, drawn = _a.drawn, container = _a.container;
-    if (!nodes)
+    var nodes = _a.nodes, paths = _a.paths, zoom = _a.zoom, drawn = _a.drawn, container = _a.container, childNodes = _a.childNodes, ids = _a.ids;
+    if (!ids)
         return paths;
-    for (var i = 0; i < nodes.length; i++) {
-        var node = nodes[i];
+    for (var i = 0; i < ids.length; i++) {
+        var id = ids[i];
+        var node = nodes[id];
         if (drawn[node.id])
             continue;
         else
             drawn[node.id] = true;
         var recursiveChildrenLinks = _getLinks({
-            nodes: node.children,
+            ids: childNodes[id],
+            nodes: nodes,
+            childNodes: childNodes,
             paths: paths,
             zoom: zoom,
             drawn: drawn,
             container: container,
         });
         paths = recursiveChildrenLinks ? __spreadArrays(recursiveChildrenLinks) : paths;
-        paths = getLinksForThisNode({ node: node, paths: paths, zoom: zoom, container: container });
+        paths = getLinksForThisNode({ node: node, paths: paths, zoom: zoom, container: container, nodes: nodes, childNodes: childNodes });
     }
     return paths;
 }
 function getLinksForThisNode(_a) {
-    var node = _a.node, paths = _a.paths, zoom = _a.zoom, container = _a.container;
-    var children = node.children;
+    var nodes = _a.nodes, childNodes = _a.childNodes, node = _a.node, paths = _a.paths, zoom = _a.zoom, container = _a.container;
+    if (!childNodes || !nodes || !node)
+        return paths;
+    var children = childNodes[node.id];
     if (children) {
         var from = getPositionFrom(container, node.id, zoom);
         for (var j = 0; j < children.length; j++) {
-            var subNode = children[j];
+            var id = children[j];
+            var subNode = nodes[id];
             var to = getPositionTo(container, subNode.id, zoom);
             var pathFunction = bezierStringFromTwoPoints;
             if (to && from) {
@@ -309,7 +320,7 @@ var withComma = function (_a) {
 };
 var bezierString = function (_a) {
     var p1 = _a.p1, p2 = _a.p2, p3 = _a.p3, p4 = _a.p4;
-    return "M" + withComma(p1) + "\n      C" + withComma(p2) + "\n      " + withComma(p3) + "\n      " + withComma(p4);
+    return "M" + withComma(p1) + "\n    C" + withComma(p2) + "\n    " + withComma(p3) + "\n    " + withComma(p4);
 };
 var bezierFromTwoPoints = function (_a) {
     var p1 = _a.p1, p2 = _a.p2;
@@ -381,8 +392,10 @@ var Editor = /** @class */ (function (_super) {
         };
         _this.resetPaths = function () {
             var zoom = _this.state.zoom;
-            var nodes = _this.props.nodes;
+            var _a = _this.props, nodes = _a.nodes, childNodes = _a.childNodes, headNodeIds = _a.headNodeIds;
             var links = getLinks({
+                ids: headNodeIds,
+                childNodes: childNodes,
                 nodes: nodes,
                 zoom: zoom,
                 container: EDITOR_CONTAINER,
@@ -415,7 +428,7 @@ var Editor = /** @class */ (function (_super) {
     Editor.prototype.render = function () {
         var _this = this;
         var _a = this.state, zoom = _a.zoom, links = _a.links;
-        var _b = this.props, _c = _b.currentPosition, currentPosition = _c === void 0 ? { x: 0, y: 0 } : _c, onDragContainerMouseDown = _b.onDragContainerMouseDown, Node = _b.Node, onPathClicked = _b.onPathClicked;
+        var _b = this.props, _c = _b.currentPosition, currentPosition = _c === void 0 ? { x: 0, y: 0 } : _c, onDragContainerMouseDown = _b.onDragContainerMouseDown, Node = _b.Node, onPathClicked = _b.onPathClicked, headNodeIds = _b.headNodeIds;
         var x = currentPosition.x, y = currentPosition.y;
         return (createElement("div", { id: "editor", className: "editor", onMouseDown: onDragContainerMouseDown, onWheel: function (e) {
                 // const x = e.deltaX;
@@ -428,7 +441,7 @@ var Editor = /** @class */ (function (_super) {
             createElement("div", { id: EDITOR_CONTAINER, className: "editor__tree", style: {
                     transform: "translate(" + x + "px, " + y + "px) scale(" + zoom + ")",
                 } },
-                createElement(Tree, __assign({}, this.props, { Node: Node })))));
+                createElement(Tree, __assign({}, this.props, { ids: headNodeIds, Node: Node })))));
     };
     return Editor;
 }(Component));

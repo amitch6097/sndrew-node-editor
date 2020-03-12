@@ -2,7 +2,9 @@ import * as React from 'react';
 import './Tree.css';
 
 interface TreeProps {
-    nodes: SndrewEditor.INode[];
+    ids: string[];
+    nodes: Record<string, SndrewEditor.INode>;
+    childNodes: Record<string, string[]>;
     Node: React.ComponentClass<any>;
     headNode?: boolean;
     drawn?: {
@@ -11,7 +13,7 @@ interface TreeProps {
 }
 
 export default function Tree(props: TreeProps) {
-    const { nodes, Node, headNode = true, drawn = {} } = props;
+    const { ids, childNodes, nodes, Node, headNode = true, drawn = {} } = props;
 
     const hasDrawn = (id: string) => {
         return Boolean(drawn[id]);
@@ -22,12 +24,13 @@ export default function Tree(props: TreeProps) {
 
     return (
         <div className="tree">
-            {nodes &&
-                nodes
-                    .filter(node => !hasDrawn(node.id))
-                    .map(node => {
-                        setDrawn(node.id);
-                        const children = node.children && node.children.filter(child => !hasDrawn(child.id));
+            {ids &&
+                ids
+                    .filter(id => !hasDrawn(id))
+                    .map(id => {
+                        setDrawn(id);
+                        const node = nodes[id];
+                        const childIds = childNodes[id].filter(cid => !hasDrawn(cid));
                         return (
                             node && (
                                 <div
@@ -38,8 +41,8 @@ export default function Tree(props: TreeProps) {
                                     <div id={node.id} className="tree__node-container-node">
                                         <Node {...node} />
                                     </div>
-                                    {children && children.length !== 0 && (
-                                        <Tree {...props} nodes={children} headNode={false} drawn={drawn} />
+                                    {childIds && childIds.length > 0 && (
+                                        <Tree {...props} ids={childIds} headNode={false} drawn={drawn} />
                                     )}
                                 </div>
                             )

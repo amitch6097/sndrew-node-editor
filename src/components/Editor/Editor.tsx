@@ -13,7 +13,9 @@ interface IEditorProps {
     };
     onDragContainerMouseDown?: (e: any) => void;
     Node: React.ComponentClass<any>;
-    nodes: SndrewEditor.INode[];
+    nodes: Record<string, SndrewEditor.INode>;
+    headNodeIds: string[];
+    childNodes: Record<string, string[]>;
     onPathClicked?: (link: SndrewEditor.ILink) => void;
 }
 
@@ -53,8 +55,10 @@ class Editor extends React.Component<IEditorProps, IEditorState> {
 
     resetPaths = () => {
         const { zoom } = this.state;
-        const { nodes } = this.props;
+        const { nodes, childNodes, headNodeIds } = this.props;
         const links = EditorHelpers.getLinks({
+            ids: headNodeIds,
+            childNodes,
             nodes,
             zoom,
             container: EDITOR_CONTAINER,
@@ -74,7 +78,13 @@ class Editor extends React.Component<IEditorProps, IEditorState> {
 
     render() {
         const { zoom, links } = this.state;
-        const { currentPosition = { x: 0, y: 0 }, onDragContainerMouseDown, Node, onPathClicked } = this.props;
+        const {
+            currentPosition = { x: 0, y: 0 },
+            onDragContainerMouseDown,
+            Node,
+            onPathClicked,
+            headNodeIds,
+        } = this.props;
         const { x, y } = currentPosition;
 
         return (
@@ -102,7 +112,7 @@ class Editor extends React.Component<IEditorProps, IEditorState> {
                         transform: `translate(${x}px, ${y}px) scale(${zoom})`,
                     }}
                 >
-                    <Tree {...this.props} Node={Node} />
+                    <Tree {...this.props} ids={headNodeIds} Node={Node} />
                 </div>
             </div>
         );

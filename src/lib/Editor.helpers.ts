@@ -1,5 +1,7 @@
 interface IGetLinksParams {
-    nodes: SndrewEditor.INode[];
+    ids: string[];
+    nodes: Record<string, SndrewEditor.INode>;
+    childNodes: Record<string, string[]>;
     zoom: number;
     container: string;
 }
@@ -9,23 +11,34 @@ interface IDrawn {
 }
 type TPaths = Array<SndrewEditor.ILink>;
 
-export function getLinks({ nodes, zoom, container }: IGetLinksParams) {
-    if (!nodes) return [];
+export function getLinks({ nodes, zoom, container, childNodes, ids }: IGetLinksParams) {
+    if (!ids) return [];
     const drawn: IDrawn = {};
     const paths: TPaths = [];
-    const links = _getLinks({ nodes, paths, zoom, drawn, container });
+    const links = _getLinks({ nodes, paths, zoom, drawn, container, childNodes, ids });
     return links;
 }
 
-function _getLinks({ nodes, paths, zoom, drawn, container }: IGetLinksParams & { drawn: IDrawn; paths: TPaths }) {
-    if (!nodes) return paths;
-    for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
+function _getLinks({
+    nodes,
+    paths,
+    zoom,
+    drawn,
+    container,
+    childNodes,
+    ids,
+}: IGetLinksParams & { drawn: IDrawn; paths: TPaths }) {
+    if (!ids) return paths;
+    for (let i = 0; i < ids.length; i++) {
+        const id: string = ids[i];
+        const node = nodes[id];
 
         if (drawn[node.id]) continue;
         else drawn[node.id] = true;
         const recursiveChildrenLinks = _getLinks({
-            nodes: node.children,
+            ids: childNodes[id],
+            nodes,
+            childNodes,
             paths,
             zoom,
             drawn,
@@ -33,27 +46,34 @@ function _getLinks({ nodes, paths, zoom, drawn, container }: IGetLinksParams & {
         });
 
         paths = recursiveChildrenLinks ? [...recursiveChildrenLinks] : paths;
-        paths = getLinksForThisNode({ node, paths, zoom, container });
+        paths = getLinksForThisNode({ node, paths, zoom, container, nodes, childNodes });
     }
     return paths;
 }
 
 function getLinksForThisNode({
+    nodes,
+    childNodes,
     node,
     paths,
     zoom,
     container,
 }: {
+    nodes: Record<string, SndrewEditor.INode>;
+    childNodes: Record<string, string[]>;
     node: SndrewEditor.INode;
     paths: TPaths;
     zoom: number;
     container: string;
 }) {
-    const { children } = node;
+    if (!childNodes || !nodes || !node) return paths;
+
+    const children = childNodes[node.id];
     if (children) {
         const from = getPositionFrom(container, node.id, zoom);
         for (let j = 0; j < children.length; j++) {
-            const subNode = children[j];
+            const id = children[j];
+            const subNode = nodes[id];
             const to = getPositionTo(container, subNode.id, zoom);
             let pathFunction = bezierStringFromTwoPoints;
             if (to && from) {
@@ -136,9 +156,9 @@ const bezierString = ({
     p4: SndrewEditor.IPoint;
 }): string =>
     `M${withComma(p1)}
-      C${withComma(p2)}
-      ${withComma(p3)}
-      ${withComma(p4)}`;
+    C${withComma(p2)}
+    ${withComma(p3)}
+    ${withComma(p4)}`;
 
 const bezierFromTwoPoints = ({ p1, p2 }: { p1: SndrewEditor.IPoint; p2: SndrewEditor.IPoint }) => {
     const minY = Math.min(p1.y, p2.y);

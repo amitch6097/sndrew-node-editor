@@ -20,61 +20,48 @@ function Node(props: any) {
   );
 }
 
+const nodes = {
+  '1': {
+    id: '1',
+  },
+  '2a': {
+    id: '2a',
+  },
+  '2b': {
+    id: '2b',
+  },
+  '3a': {
+    id: '3a',
+  },
+  '3b': {
+    id: '3b',
+  },
+  '3c': {
+    id: '3c',
+  },
+  '3d': {
+    id: '3d',
+  },
+  '4a': {
+    id: '4a',
+  },
+};
+
+const children = {
+  '1': ['2a', '2b'],
+  '2a': ['3a'],
+  '2b': ['3b', '3c', '3d'],
+  '3a': ['1'],
+  '3b': ['1'],
+  '3c': ['4a'],
+  '3d': [],
+  '4a': ['1'],
+};
+
 export default function App() {
   return (
     <div className="App">
-      <Editor
-        Node={Node}
-        nodes={[
-          {
-            id: '1',
-            children: [
-              {
-                id: '2a',
-                children: [
-                  {
-                    id: '3a',
-                    children: [
-                      {
-                        id: '1',
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                id: '2b',
-                children: [
-                  {
-                    id: '3b',
-                    children: [
-                      {
-                        id: '1',
-                      },
-                    ],
-                  },
-                  {
-                    id: '3c',
-                    children: [
-                      {
-                        id: '4a',
-                        children: [
-                          {
-                            id: '1',
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                  {
-                    id: '3d',
-                  },
-                ],
-              },
-            ],
-          },
-        ]}
-      />
+      <Editor headNodeIds={['1']} Node={Node} childNodes={children} nodes={nodes} />
     </div>
   );
 }
