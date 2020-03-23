@@ -1,5 +1,6 @@
 import * as React from 'react';
 import './Editor.css';
+import SndrewEditor from '../../typings/globals';
 
 import SVGLayer from '../SVGLayer/SVGLayer';
 import Tree from '../Tree/Tree';

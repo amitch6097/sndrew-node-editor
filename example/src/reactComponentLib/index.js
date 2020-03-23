@@ -153,7 +153,7 @@ function withDrag(WrappedComponent) {
                 }
                 else {
                     _this.setState({
-                        currentPosition: nextPosition
+                        currentPosition: nextPosition,
                     });
                 }
             };
