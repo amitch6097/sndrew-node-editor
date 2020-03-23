@@ -91,7 +91,6 @@ function SVGPath(_a) {
             return (createElement("path", { onClick: function () { return onClick(link); }, onMouseOver: function () { return setHover(true); }, onMouseOut: function () { return setHover(false); }, key: p, d: p, stroke: stroke, strokeWidth: hover ? '5' : '2', fill: "none" }));
         })));
 }
-//# sourceMappingURL=SVGPath.js.map
 
 var SVGLayer = /** @class */ (function (_super) {
     __extends(SVGLayer, _super);
@@ -107,7 +106,6 @@ var SVGLayer = /** @class */ (function (_super) {
     };
     return SVGLayer;
 }(Component));
-//# sourceMappingURL=SVGLayer.js.map
 
 var css$2 = ".tree {\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n}\n\n.tree .tree__node-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n}\n\n.tree .tree__node-container .tree__node-container-node {\n  pointer-events: all;\n  margin: 30px;\n}\n";
 styleInject(css$2);
@@ -133,7 +131,6 @@ function Tree(props) {
                 childIds && childIds.length > 0 && (createElement(Tree, __assign({}, props, { ids: childIds, headNode: false, drawn: drawn }))))));
         })));
 }
-//# sourceMappingURL=Tree.js.map
 
 function withDrag(WrappedComponent) {
     return /** @class */ (function (_super) {
@@ -212,7 +209,6 @@ function withDrag(WrappedComponent) {
         return WithDragComponent;
     }(React__default.Component));
 }
-//# sourceMappingURL=withDrag.js.map
 
 function getLinks(_a) {
     var nodes = _a.nodes, zoom = _a.zoom, container = _a.container, childNodes = _a.childNodes, ids = _a.ids;
