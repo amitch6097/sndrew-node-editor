@@ -1,7 +1,5 @@
 import React from 'react';
 
-import SndrewEditor from '../typings/globals';
-
 export interface IEditContainerState {
     controlled?: boolean;
     onChangePosition?: (nextPosition: SndrewEditor.IPoint) => void;
