@@ -11,11 +11,14 @@ interface IEditorProps {
     nodes: Record<string, SndrewEditor.INode>;
     headNodeIds: string[];
     childNodes: Record<string, string[]>;
-    currentPosition?: SndrewEditor.IPoint;
+    currentPosition?: {
+        x: number;
+        y: number;
+    };
     zoom?: number;
     controlled?: boolean;
     onZoom?: (nextZoom: number) => void;
-    onPan?: (nextPosition: SndrewEditor.IPoint) => void;
+    onPan?: (nextPosition: { x: number; y: number }) => void;
     onDragContainerMouseDown?: (e: any) => void;
     onPathClicked?: (link: SndrewEditor.ILink) => void;
 }

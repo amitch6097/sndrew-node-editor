@@ -2,7 +2,7 @@ import React from 'react';
 
 export interface IEditContainerState {
     controlled?: boolean;
-    onChangePosition?: (nextPosition: SndrewEditor.IPoint) => void;
+    onChangePosition?: (nextPosition: { x: number; y: number }) => void;
 
     currentPosition: {
         x: number;
@@ -30,7 +30,7 @@ export default function withDrag(WrappedComponent: any) {
             return (controlled && currentPositionProp) || currentPositionState;
         };
 
-        setPosition = (nextPosition: SndrewEditor.IPoint) => {
+        setPosition = (nextPosition: { x: number; y: number }) => {
             const { onChangePosition, controlled } = this.props;
             if (controlled && onChangePosition) {
                 onChangePosition(nextPosition);
