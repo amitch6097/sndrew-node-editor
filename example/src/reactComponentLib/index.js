@@ -141,13 +141,27 @@ function withDrag(WrappedComponent) {
                 currentPosition: _this.props.currentPosition || { x: 0, y: 0 },
                 lastDragPosition: undefined,
             };
+            _this.getPosition = function () {
+                var currentPositionState = _this.state.currentPosition;
+                var _a = _this.props, currentPositionProp = _a.currentPosition, controlled = _a.controlled;
+                return (controlled && currentPositionProp) || currentPositionState;
+            };
+            _this.setPosition = function (nextPosition) {
+                var _a = _this.props, onChangePosition = _a.onChangePosition, controlled = _a.controlled;
+                if (controlled && onChangePosition) {
+                    onChangePosition(nextPosition);
+                }
+                else {
+                    _this.setState({
+                        currentPosition: nextPosition
+                    });
+                }
+            };
             _this.onTranslate = function (xValue, yValue) {
-                var currentPosition = _this.state.currentPosition;
-                _this.setState({
-                    currentPosition: {
-                        x: currentPosition.x + xValue,
-                        y: currentPosition.y + yValue,
-                    },
+                var currentPosition = _this.getPosition();
+                _this.setPosition({
+                    x: currentPosition.x + xValue,
+                    y: currentPosition.y + yValue,
                 });
             };
             _this.onMouseDown = function (e) {
@@ -162,16 +176,17 @@ function withDrag(WrappedComponent) {
                 }
             };
             _this.onMouseMove = function (e) {
-                var _a = _this.state, lastDragPosition = _a.lastDragPosition, currentPosition = _a.currentPosition;
+                var currentPosition = _this.getPosition();
+                var lastDragPosition = _this.state.lastDragPosition;
                 var screenX = e.screenX, screenY = e.screenY;
                 if (lastDragPosition) {
                     var deltaX = screenX - lastDragPosition.x;
                     var deltaY = screenY - lastDragPosition.y;
+                    _this.setPosition({
+                        x: currentPosition.x + deltaX,
+                        y: currentPosition.y + deltaY,
+                    });
                     _this.setState({
-                        currentPosition: {
-                            x: currentPosition.x + deltaX,
-                            y: currentPosition.y + deltaY,
-                        },
                         lastDragPosition: { x: screenX, y: screenY },
                     });
                 }
@@ -204,7 +219,7 @@ function withDrag(WrappedComponent) {
             }
         };
         WithDragComponent.prototype.render = function () {
-            return (React__default.createElement(WrappedComponent, __assign({ currentPosition: this.state.currentPosition }, this.props, { onTranslate: this.onTranslate, onDragContainerMouseDown: this.onMouseDown })));
+            return (React__default.createElement(WrappedComponent, __assign({}, this.props, { currentPosition: this.getPosition(), onDragContainerMouseDown: this.onMouseDown })));
         };
         return WithDragComponent;
     }(React__default.Component));
@@ -387,8 +402,8 @@ var Editor = /** @class */ (function (_super) {
             _this.resetPaths();
         };
         _this.resetPaths = function () {
-            var zoom = _this.state.zoom;
             var _a = _this.props, nodes = _a.nodes, childNodes = _a.childNodes, headNodeIds = _a.headNodeIds;
+            var zoom = _this.getZoom();
             var links = getLinks({
                 ids: headNodeIds,
                 childNodes: childNodes,
@@ -401,11 +416,26 @@ var Editor = /** @class */ (function (_super) {
             });
         };
         _this.onZoom = function (value) {
-            var zoom = _this.state.zoom;
-            var nextZoom = zoom + value;
-            _this.setState({
-                zoom: nextZoom < MIN_ZOOM ? MIN_ZOOM : nextZoom > MAX_ZOOM ? MAX_ZOOM : nextZoom,
-            });
+            _this.setZoom(value);
+        };
+        _this.setZoom = function (zoom) {
+            var lastZoom = _this.getZoom();
+            var nextZoom = lastZoom + zoom;
+            var nextZoomSafe = nextZoom < MIN_ZOOM ? MIN_ZOOM : nextZoom > MAX_ZOOM ? MAX_ZOOM : nextZoom;
+            if (_this.props.controlled && _this.props.onZoom) {
+                _this.props.onZoom(nextZoomSafe);
+            }
+            else {
+                _this.setState({
+                    zoom: nextZoomSafe,
+                });
+            }
+        };
+        _this.getZoom = function () {
+            var zoomState = _this.state.zoom;
+            var _a = _this.props, controlled = _a.controlled, zoomProp = _a.zoom;
+            var zoom = (controlled && zoomProp) || zoomState;
+            return zoom < MIN_ZOOM ? MIN_ZOOM : zoom > MAX_ZOOM ? MAX_ZOOM : zoom;
         };
         return _this;
     }
@@ -423,11 +453,11 @@ var Editor = /** @class */ (function (_super) {
     };
     Editor.prototype.render = function () {
         var _this = this;
-        var _a = this.state, zoom = _a.zoom, links = _a.links;
-        var _b = this.props, _c = _b.currentPosition, currentPosition = _c === void 0 ? { x: 0, y: 0 } : _c, onDragContainerMouseDown = _b.onDragContainerMouseDown, Node = _b.Node, onPathClicked = _b.onPathClicked, headNodeIds = _b.headNodeIds;
+        var links = this.state.links;
+        var _a = this.props, _b = _a.currentPosition, currentPosition = _b === void 0 ? { x: 0, y: 0 } : _b, onDragContainerMouseDown = _a.onDragContainerMouseDown, Node = _a.Node, onPathClicked = _a.onPathClicked, headNodeIds = _a.headNodeIds;
         var x = currentPosition.x, y = currentPosition.y;
+        var zoom = this.getZoom();
         return (createElement("div", { id: "editor", className: "editor", onMouseDown: onDragContainerMouseDown, onWheel: function (e) {
-                // const x = e.deltaX;
                 var y = e.deltaY / 1000;
                 _this.onZoom(y);
             } },
