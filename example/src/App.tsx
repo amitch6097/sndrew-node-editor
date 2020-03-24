@@ -58,10 +58,47 @@ const children = {
   '4a': ['1'],
 };
 
-export default function App() {
-  return (
-    <div className="App">
-      <Editor headNodeIds={['1']} Node={Node} childNodes={children} nodes={nodes} />
-    </div>
-  );
+interface AppState {
+  zoom: number;
+  position: {
+    x: number;
+    y: number;
+  };
+}
+
+export default class App extends React.Component<{}, AppState> {
+  state = {
+    zoom: 0,
+    position: { x: 0, y: 0 },
+  };
+
+  setZoom = (zoom: number) => {
+    this.setState({
+      zoom,
+    });
+  };
+
+  setPostion = (nextPosition: { x: number; y: number }) => {
+    this.setState({
+      position: nextPosition,
+    });
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <Editor
+          currentPosition={this.state.position}
+          zoom={this.state.zoom}
+          controlled={true}
+          onChangePosition={this.setPostion}
+          onZoom={this.setZoom}
+          headNodeIds={['1']}
+          Node={Node}
+          childNodes={children}
+          nodes={nodes}
+        />
+      </div>
+    );
+  }
 }
